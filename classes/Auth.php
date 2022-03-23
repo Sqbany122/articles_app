@@ -7,7 +7,25 @@ class Auth extends MySQL {
     }
 
     public function login($username, $password) {
+        $result = $this->query("
+            SELECT id, username, password
+            FROM users
+            WHERE username = '".$username."'
+        ");
 
+        if (empty($result)) {
+            throw new Exception("Username doesn't exists in our database");
+        } else {
+            if (password_verify($password, $result['password'])) {
+                $_SESSION["logged_in"] = true;
+                $_SESSION["id"] = $result['id'];
+                $_SESSION["username"] = $username;
+                header("location: /articles_app/articles.php");
+                exit;
+            } else {
+                throw new Exception("Password didn't match");
+            }
+        }
     }
 
     public function register($username, $password, $reapeat_password) {
@@ -36,6 +54,10 @@ class Auth extends MySQL {
     }
 
     public function logout() {
-
+        session_start();    
+        $_SESSION = array();  
+        session_destroy();  
+        header("location: /articles_app/login.php");
+        exit;
     }
 }
