@@ -8,7 +8,7 @@ class Auth extends MySQL {
 
     public function login($username, $password) {
         $result = $this->query("
-            SELECT id, username, password
+            SELECT id, username, password, role
             FROM users
             WHERE username = '".$username."'
         ");
@@ -19,6 +19,7 @@ class Auth extends MySQL {
             if (password_verify($password, $result['password'])) {
                 $_SESSION["logged_in"] = true;
                 $_SESSION["id"] = $result['id'];
+                $_SESSION["role"] = $result['role'];
                 $_SESSION["username"] = $username;
                 header("location: /articles_app/articles.php");
                 exit;

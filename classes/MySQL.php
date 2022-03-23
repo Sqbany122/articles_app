@@ -20,15 +20,23 @@ class MySQL {
     public function query($query){
         $query_result = $this->connect->query($query);
         $result = array();
-        if($query_result->num_rows > 1) {
-            while($row = $query_result->fetch_assoc()){
-                array_push($result, $row);
+        
+        if ($query_result) {
+            if ($query_result->num_rows > 1) {
+                while($row = $query_result->fetch_assoc()){
+                    array_push($result, $row);
+                }
+            } else {
+                $result = $query_result->fetch_assoc();
             }
-        } elseif ($query_result->num_rows) {
-            $result = $query_result->fetch_assoc();
-        } 
+        }
 
         return $result;
+    }
+
+    public function insertOrUpdate($query) {
+        $query_result = $this->connect->query($query);
+        return $query_result;
     }
 
     public function __destruct(){
