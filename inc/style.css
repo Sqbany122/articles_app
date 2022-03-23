@@ -31,3 +31,7 @@ a:hover {
 .article_image {
     width: 200px;
 }
+
+.article_body {
+    text-align: justify;
+}

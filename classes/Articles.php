@@ -42,7 +42,7 @@ class Articles extends MySQL {
         if ($articles) {
             foreach ($articles as $article) {
                 $articlesString .= '
-                    <a class="article d-flex flex-column shadow rounded" href="#">
+                    <a class="article d-flex flex-column shadow rounded" href="/articles_app/single_article.php?id='.$article['id'].'&action=view">
                         <img class="w-100" src="/articles_app/inc/images/article_image.png" />
                         <div class="px-2 py-1">
                             <span class="d-block">Title: '.substr($article['title'], 0, 25).(strlen($article['title']) > 25 ? "..." : "").'</span>
@@ -77,7 +77,7 @@ class Articles extends MySQL {
                             <span class="d-block">Stauts: '.$article['status'].'</span>
                             <span class="d-block">Added: '.$article['created_at'].'</span>
                             <span class="d-block">Last update: '.$article['updated_at'].'</span>
-                            <a href="#" style="color: #fff" class="btn btn-warning">View</a>';
+                            <a href="/articles_app/single_article.php?id='.$article['id'].'&action=view" style="color: #fff" class="btn btn-warning">View</a>';
                             if ($article['status'] == 'waiting') {
                                 $articlesString .= '<form method="POST" action="/articles_app/handlers/handleAcceptArticle.php" class="d-inline">
                                     <input type="hidden" name="article_id" value="'.$article['id'].'" />
@@ -99,6 +99,32 @@ class Articles extends MySQL {
         }
 
         echo $articlesString;
+    }
+
+    public function getSingleArticle($id) {
+        $articleString = "";
+
+        $article = $this->query("
+            SELECT a.*, b.username
+            FROM articles a
+            LEFT JOIN users b ON b.id = a.user_id
+            WHERE a.id = ".$id."
+        ");
+
+        if ($article) {
+            $articleString .= '
+                <div class="">
+                    <h1 class="text-center">'.$article['title'].'</h1>
+                    <div class="text-center mb-4">
+                        <span class="px-4">Author: '.$article['username'].'</span>
+                        <span class="px-4">Date: '.$article['created_at'].'</span>
+                    </div>
+                    <div class="article_body">'.$article['body'].'</div>
+                </div>
+            ';
+        }
+
+        echo $articleString;
     }
 
     public function acceptArticle($id) {
